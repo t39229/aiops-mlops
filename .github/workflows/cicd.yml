@@ -22,10 +22,13 @@ jobs:
           echo "Listing files in ${{ github.workspace }}"
           ls -al ${{ github.workspace }}
 
+      - name: Clear pip cache
+        run: pip cache purge
+
       - name: Install Dependencies
         run: |
           pwd
-          pip install -r requirements.txt
+          pip install -r req.txt
         working-directory: ${{ github.workspace }}
 
       - name: Train Model
