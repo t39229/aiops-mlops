@@ -16,7 +16,9 @@ jobs:
           python-version: 3.8
 
       - name: Install Dependencies
-        run: pip install -r requirements.txt
+        run: |
+          cd ${{ github.workspace }}  # Ensure we are in the root directory
+          pip install -r requirements.txt
 
       - name: Train Model
         run: python train.py # Train the model
@@ -46,4 +48,4 @@ jobs:
         run: |
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
           docker tag ml-model your-dockerhub-username/ml-model
-          docker push your-dockerhub-username/ml-model          
+          docker push your-dockerhub-username/ml-model
