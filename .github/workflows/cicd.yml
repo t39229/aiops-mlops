@@ -9,6 +9,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Set Up Python
         uses: actions/setup-python@v4
@@ -18,12 +20,13 @@ jobs:
       - name: "Debug List Files"
         run: |
           echo "Listing files in ${{ github.workspace }}"
-          ls -al ${{ github.workspace }}    
+          ls -al ${{ github.workspace }}
 
       - name: Install Dependencies
         run: |
-          cd ${{ github.workspace }}  # Ensure we are in the root directory
+          pwd
           pip install -r requirements.txt
+        working-directory: ${{ github.workspace }}
 
       - name: Train Model
         run: python train.py # Train the model
