@@ -27,23 +27,23 @@ jobs:
           name: model
           path: model.pkl
 
-deploy:
-  needs: train
-  runs-on: ubuntu-latest
-  steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+  deploy:
+    needs: train
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-    - name: Download Model
-      uses: actions/download-artifact@v3
-      with:
-        name: model
-        path: .
+      - name: Download Model
+        uses: actions/download-artifact@v3
+        with:
+          name: model
+          path: .
 
-    - name: Build Docker Image
-      run: docker build -t ml-model .
-    - name: Push to DockerHub
-      run: |
-        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-        docker tag ml-model your-dockerhub-username/ml-model
-        docker push your-dockerhub-username/ml-model          
+      - name: Build Docker Image
+        run: docker build -t ml-model .
+      - name: Push to DockerHub
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+          docker tag ml-model your-dockerhub-username/ml-model
+          docker push your-dockerhub-username/ml-model          
