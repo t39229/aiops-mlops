@@ -15,6 +15,11 @@ jobs:
         with:
           python-version: 3.8
 
+      - name: "Debug List Files"
+        run: |
+          echo "Listing files in ${{ github.workspace }}"
+          ls -al ${{ github.workspace }}    
+
       - name: Install Dependencies
         run: |
           cd ${{ github.workspace }}  # Ensure we are in the root directory
