@@ -40,7 +40,7 @@ jobs:
           ls -la ${{ github.workspace }}
 
       - name: Train Model
-        run: python ${{ github.workspace }}/train.py # Train the model
+        run: python train.py # Train the model
 
       - name: Debug Info
         run: |
@@ -51,12 +51,9 @@ jobs:
           ls -la /home/runner/work/aiops-mlops/aiops-mlops/
           echo "Python version:"
           python --version
-          echo "Pip list:"
-          pip list
 
       - name: Run train.py with verbose output
         run: python -v ${{ github.workspace }}/train.py
-
 
       - name: Save Model Artifact
         uses: actions/upload-artifact@v4
