@@ -25,6 +25,12 @@ jobs:
       - name: Clear pip cache
         run: pip cache purge
 
+      - name: Create requirements.txt
+        run: |
+          echo "numpy==1.21.0" > requirements.txt
+          echo "pandas==1.3.0" >> requirements.txt
+          # Add other dependencies as needed
+
       - name: Install Dependencies
         run: pip install -r ${{ github.workspace }}/requirements.txt
 
