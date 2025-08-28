@@ -28,7 +28,7 @@ jobs:
       - name: Install Dependencies
         run: |
           pwd
-          pip install -r req.txt
+          pip install -r requirements.txt
         working-directory: ${{ github.workspace }}
 
       - name: Train Model
