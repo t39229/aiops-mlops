@@ -34,8 +34,13 @@ jobs:
       - name: Install Dependencies
         run: pip install -r ${{ github.workspace }}/requirements.txt
 
+      - name: List directory contents
+        run: |
+          echo "Contents of ${{ github.workspace }}:"
+          ls -la ${{ github.workspace }}
+
       - name: Train Model
-        run: python train.py # Train the model
+        run: python ${{ github.workspace }}/train.py # Train the model
 
       - name: Save Model Artifact
         uses: actions/upload-artifact@v4
@@ -49,6 +54,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # This ensures all history for all branches and tags is fetched
 
       - name: Download Model
         uses: actions/download-artifact@v4
