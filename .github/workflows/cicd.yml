@@ -34,6 +34,7 @@ jobs:
           echo "joblib==1.1.0" >> requirements.txt
           echo "mlflow==1.24.0" >> requirements.txt
           echo "werkzeug==2.2.2" >> requirements.txt
+          echo "protobuf==3.20.1" >> requirements.txt
           echo "prometheus-client==0.14.1" >> requirements.txt
           # Add other dependencies as needed
 
