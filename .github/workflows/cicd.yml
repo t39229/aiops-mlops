@@ -17,19 +17,16 @@ jobs:
         with:
           python-version: 3.8
 
-      - name: "Debug List Files"
-        run: |
-          echo "Listing files in ${{ github.workspace }}"
-          ls -al ${{ github.workspace }}
+      # - name: "Debug List Files"
+      #   run: |
+      #     echo "Listing files in ${{ github.workspace }}"
+      #     ls -al ${{ github.workspace }}
 
       - name: Clear pip cache
         run: pip cache purge
 
       - name: Install Dependencies
-        run: |
-          pwd
-          pip install -r requirements.txt
-        working-directory: ${{ github.workspace }}
+        run: pip install -r requirements.txt
 
       - name: Train Model
         run: python train.py # Train the model
