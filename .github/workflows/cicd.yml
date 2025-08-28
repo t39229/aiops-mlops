@@ -36,8 +36,9 @@ jobs:
 
       - name: List directory contents
         run: |
-          echo "Contents of ${{ github.workspace }}:"
-          ls -la ${{ github.workspace }}
+          echo "Current working directory: $(pwd)"
+          echo "Contents of current directory:"
+          ls -la
 
       - name: Train Model
         run: python train.py # Train the model
