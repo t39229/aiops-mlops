@@ -36,14 +36,14 @@ jobs:
       - name: Train Model
         run: python train_model.py # Use the training-only script
 
-      - name: Save Model Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: model-artifacts
-          path: |
-            model.pkl
-            scaler.pkl
-            selector.pkl
+      # - name: Save Model Artifacts
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: model-artifacts
+      #     path: |
+      #       model.pkl
+      #       scaler.pkl
+      #       selector.pkl
 
       # Save both model artifacts AND requirements.txt for the deploy job
       - name: Save Model Artifacts and Requirements
