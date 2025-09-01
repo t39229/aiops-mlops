@@ -34,7 +34,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Train Model
-        run: python train_model.py  # Use the training-only script
+        run: python train_model.py # Use the training-only script
 
       - name: Save Model Artifacts
         uses: actions/upload-artifact@v4
@@ -45,6 +45,17 @@ jobs:
             scaler.pkl
             selector.pkl
 
+      # Save both model artifacts AND requirements.txt for the deploy job
+      - name: Save Model Artifacts and Requirements
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-artifacts
+          path: |
+            model.pkl
+            scaler.pkl
+            selector.pkl
+            requirements.txt
+
   deploy:
     needs: train
     runs-on: ubuntu-latest
@@ -52,26 +63,35 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # Download artifacts from the train job (includes requirements.txt)
       - name: Download Model Artifacts
         uses: actions/download-artifact@v4
         with:
           name: model-artifacts
           path: .
 
+      # Verify files are present
+      - name: List downloaded files
+        run: |
+          echo "Downloaded files:"
+          ls -la
+          echo "Checking if requirements.txt exists:"
+          test -f requirements.txt && echo "requirements.txt found" || echo "requirements.txt NOT found"
+
       - name: Create Dockerfile
         run: |
           cat > Dockerfile << EOF
           FROM python:3.8-slim
-          
+
           WORKDIR /app
-          
+
           COPY requirements.txt .
           RUN pip install --no-cache-dir -r requirements.txt
-          
+
           COPY . .
-          
+
           EXPOSE 5000
-          
+
           CMD ["python", "app.py"]  # Use the API-only script
           EOF
 
