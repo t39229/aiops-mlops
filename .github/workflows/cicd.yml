@@ -3,71 +3,47 @@ on:
   push:
     branches:
       - main
+
 jobs:
   train:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-        with:
-          lfs: true
 
       - name: Set Up Python
         uses: actions/setup-python@v4
         with:
           python-version: 3.8
 
-      # - name: "Debug List Files"
-      #   run: |
-      #     echo "Listing files in ${{ github.workspace }}"
-      #     ls -al ${{ github.workspace }}
-
-      - name: Clear pip cache
-        run: pip cache purge
-
       - name: Create requirements.txt
         run: |
-          echo "numpy==1.21.0" > requirements.txt
-          echo "pandas==1.3.0" >> requirements.txt
-          echo "scikit-learn==1.0.2" >> requirements.txt
-          echo "flask==2.2.2" >> requirements.txt
-          echo "joblib==1.1.0" >> requirements.txt
-          echo "mlflow==1.24.0" >> requirements.txt
-          echo "werkzeug==2.2.2" >> requirements.txt
-          echo "protobuf==3.20.1" >> requirements.txt
-          echo "prometheus-client==0.14.1" >> requirements.txt
-          # Add other dependencies as needed
+          cat > requirements.txt << EOF
+          numpy==1.21.0
+          pandas==1.3.0
+          scikit-learn==1.0.2
+          flask==2.2.2
+          joblib==1.1.0
+          mlflow==1.24.0
+          werkzeug==2.2.2
+          protobuf==3.20.1
+          prometheus-client==0.14.1
+          EOF
 
       - name: Install Dependencies
-        run: pip install -r ${{ github.workspace }}/requirements.txt
-
-      - name: List directory contents
-        run: |
-          echo "Current working directory: $(pwd)"
-          echo "Contents of current directory:"
-          ls -la
+        run: pip install -r requirements.txt
 
       - name: Train Model
-        run: python train.py # Train the model
+        run: python train_model.py  # Use the training-only script
 
-      - name: Debug Info
-        run: |
-          echo "Current directory: $(pwd)"
-          echo "Contents of current directory:"
-          ls -la
-          echo "Contents of /home/runner/work/aiops-mlops/aiops-mlops/:"
-          ls -la /home/runner/work/aiops-mlops/aiops-mlops/
-          echo "Python version:"
-          python --version
-
-      - name: Run train.py with verbose output
-        run: python -v ${{ github.workspace }}/train.py
-
-      - name: Save Model Artifact
+      - name: Save Model Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: model
-          path: model.pkl
+          name: model-artifacts
+          path: |
+            model.pkl
+            scaler.pkl
+            selector.pkl
 
   deploy:
     needs: train
@@ -75,19 +51,35 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # This ensures all history for all branches and tags is fetched
 
-      - name: Download Model
+      - name: Download Model Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: model
+          name: model-artifacts
           path: .
+
+      - name: Create Dockerfile
+        run: |
+          cat > Dockerfile << EOF
+          FROM python:3.8-slim
+          
+          WORKDIR /app
+          
+          COPY requirements.txt .
+          RUN pip install --no-cache-dir -r requirements.txt
+          
+          COPY . .
+          
+          EXPOSE 5000
+          
+          CMD ["python", "app.py"]  # Use the API-only script
+          EOF
 
       - name: Build Docker Image
         run: docker build -t ml-model .
+
       - name: Push to DockerHub
         run: |
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-          docker tag ml-model t39229/ml-model
-          docker push t39229/ml-model
+          docker tag ml-model ${{ secrets.DOCKER_USERNAME }}/ml-model:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/ml-model:latest
