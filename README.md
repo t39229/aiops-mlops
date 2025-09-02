@@ -2,6 +2,10 @@
 AIOps and MLOps examples
 https://drive.google.com/file/d/1YoRqs6WXbLs1WNVjGX_JU_un8t0OqcGP/view?usp=sharing
 
+#Cloude support and fixes 
+https://claude.ai/share/4dd90cc1-0785-4924-ad35-5eebb4fd7c71
+
+
 
 AIOps and MLOps Phases
 AI and MLOps have different phases in their lifecycle, ensuring smooth
